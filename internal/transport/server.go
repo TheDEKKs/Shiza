@@ -2,10 +2,13 @@ package transport
 
 import (
 	"log/slog"
+	"strings"
 	"thedekk/Shiza/internal/api"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
+
+
 
 func NewService(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI) {
 	for up := range updates {
@@ -14,24 +17,33 @@ func NewService(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI) {
 		}
 
 		if up.Message.Text != "" {
-			answer, err := api.Request(up.Message.Text)
-			if err != nil {
-				slog.Error("Error making API request", "error", err)
-				continue
-			}
-			if *answer == "NULL ANSWER" {
-				continue
-			}
-			msg := tgbotapi.NewMessage(up.Message.Chat.ID, *answer)
+			fields := strings.Fields(up.Message.Text) // разбивает по пробелам
+   		if len(fields) == 0 {
+      	 	continue
+    	}
 
-			msg.ReplyToMessageID = up.Message.MessageID
+    	firstWord := strings.ToLower(fields[0])
+			if firstWord == "шиз" || up.Message.Chat.IsPrivate() || (up.Message.ReplyToMessage != nil && up.Message.ReplyToMessage.From.ID == bot.Self.ID) {
 
-			if _, err := bot.Send(msg); err != nil {
-				slog.Error("Error sending message", "error", err)
-				continue
+	 			answer, err := api.Request(up.Message.Text)
+				if err != nil {
+					slog.Error("Error making API request", "error", err)
+					continue
+				}
+				if *answer == "NULL ANSWER" || answer == nil {
+					continue
+				}
+					msg := tgbotapi.NewMessage(up.Message.Chat.ID, *answer)
+
+				msg.ReplyToMessageID = up.Message.MessageID
+
+				if _, err := bot.Send(msg); err != nil {
+					slog.Error("Error sending message", "error", err)
+					continue
+				}
 			}
 		}
 	}
 
-	
+
 }
