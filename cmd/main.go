@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"thedekk/Shiza/internal/env"
 	"thedekk/Shiza/internal/transport"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -14,7 +13,8 @@ func main() {
 	fmt.Println("start bot")
 	bot, err := tgbotapi.NewBotAPI(config.BotToken)
 	if err != nil {
-		log.Panic(err)
+		fmt.Println(err)
+		return
 	}
 	bot.Debug = false
 	updateConfig := tgbotapi.NewUpdate(0)
@@ -24,6 +24,6 @@ func main() {
 
 	if err = transport.NewService(updates, bot); err != nil {
 
-		log.Printf("", err)
+		fmt.Println("", err)
 	}
 }
