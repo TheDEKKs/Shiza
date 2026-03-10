@@ -22,8 +22,5 @@ func main() {
 	updates := bot.GetUpdatesChan(updateConfig)
 
 
-	if err = transport.NewService(updates, bot); err != nil {
-
-		fmt.Println("", err)
-	}
+	transport.NewService(updates, bot)
 }
