@@ -2,15 +2,13 @@ package transport
 
 import (
 	"log/slog"
-	"os"
 	"strings"
-
+	"thedekk/Shiza/internal/api"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewService(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI, db *pgxpool.Pool) error {
+func NewService(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI) error {
 	for up := range updates {
 		if up.Message == nil {
 			continue
@@ -26,6 +24,18 @@ func NewService(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI, db *pgxpo
 
     		switch firstWord {
 				case "шиз":
+					answer, err := api.Request(up.Message.Text)
+					if err != nil {
+						slog.Error("Error making API request", "error", err)
+						continue
+					}
+
+					msg := tgbotapi.NewMessage(up.Message.Chat.ID, *answer)
+					if _, err := bot.Send(msg); err != nil {
+						slog.Error("Error sending message", "error", err)
+						continue
+					}
+
 					// Handle the "шиз" command
 
 				default:

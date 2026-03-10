@@ -8,7 +8,7 @@ import (
 
 type Config struct {
 	BotToken    string `env:"BOT_TOKEN,notEmpty"`
-	PostgresURL string `env:"DATABASE_URL,notEmpty"`
+	KeyAPI string `env:"TOKEN_API,notEmpty"`
 }
 
 
