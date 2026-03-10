@@ -8,7 +8,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func NewService(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI) error {
+func NewService(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI) {
 	for up := range updates {
 		if up.Message == nil {
 			continue
@@ -44,5 +44,5 @@ func NewService(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI) error {
 		}
 	}
 
-	return nil
+	
 }
